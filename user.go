@@ -1,9 +1,10 @@
 package asana
 
 import (
-"encoding/json"
-"fmt"
+//	"fmt"
 )
+
+//const USER_SUBPATH string = "/users"
 
 type User struct {
 	Id         int64
@@ -12,44 +13,20 @@ type User struct {
 	Workspaces []Workspace
 }
 
-type DataUser struct {
-	Data User
+func GetUser(ac *asanaclient, user_str string) User {
+	var user User
+	ac.GetResponse(GetUserPath(user_str), &user)
+	return user
 }
 
-type DataUsers struct {
-	Data []User
+func GetAllUsers(ac *asanaclient) []User {
+	var users []User
+	ac.GetResponse(GetUserPath(""), &users)
+	return users
 }
 
-func GetUserInfo(ac *asanaclient, user string) (User) {
-	body := ac.GetResponse(GetUserPath(user))
-	/*
-	err := json.Unmarshal(body, &user)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return
-	*/
-
-	var f DataUser
-	err := json.Unmarshal(body, &f)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return f.Data
-}
-
-func GetAllUsers(ac *asanaclient) ([]User) {
-	body := ac.GetResponse(GetUserPath(""))
-	var f DataUsers
-	err := json.Unmarshal(body, &f)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return f.Data
+func GetUsersInWorkspace(ac *asanaclient, workspace_id int64) []User {
+	var users []User
+	ac.GetResponse(GetUserWorkspacePath(workspace_id), &users)
+	return users
 }
